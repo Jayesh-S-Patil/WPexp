@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 3: Responsive, A11y & Animation</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           BASE STYLES (Do not modify this section)
+           ========================================= */
+        :root {
+            --primary: #3b82f6;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--light);
+        }
+
+        h1 { border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 30px; }
+        section { margin-bottom: 50px; }
+        
+        .concept-card {
+            background: white;
+            border-left: 5px solid var(--primary);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        code { background-color: #eee; padding: 2px 5px; border-radius: 4px; color: #d63384; font-size: 0.9em; }
+
+        .task-container {
+            background: #fff;
+            border: 2px dashed #cbd5e1;
+            padding: 25px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .task-badge {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--dark);
+            color: white;
+            padding: 5px 15px;
+            font-weight: bold;
+            border-radius: 20px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        /* Helper for Bootstrap Visuals */
+        .demo-box {
+            background-color: #e0e7ff;
+            border: 1px solid #6366f1;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            color: #312e81;
+            margin-bottom: 10px;
+        }
+
+        /* =========================================
+           STUDENT WORKSPACE
+           Complete the TODOs below.
+           ========================================= */
+
+        /* --- TASK 1: RESPONSIVE DESIGN & BOOTSTRAP --- */
+        
+        /* 1.1 Custom Media Query */
+        .mobile-alert {
+        /*    display:none; /* Hidden by default on Desktop */
+            background-color: #fee2e2;
+            color: #b91c1c;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #f87171;
+            margin-bottom: 10px;
+            max-width: 576px;
+        }
+
+        /* TODO 1.1: Write a Media Query for Mobile */
+        /* For mobile screens that have max-width 576px. Change the display property so the mobile-alert becomes visible. */
+        
+
+        /* 1.2 Flexbox Responsive Menu */
+        .nav-menu {
+            list-style: none; padding: 0; margin: 0;
+            background-color: var(--dark);
+            display: flex; /* Flex row by default */
+            justify-content: space-around;
+        }
+        .nav-menu li a { display: block; padding: 15px; color: white; text-decoration: none; }
+
+        /* TODO 1.2: Stack Menu Vertically on Mobile */
+        /* Inside a media query (max-width: 600px):
+           1. Flex direction should change when device is phone.
+           2. Now the vertical stacking will work, but all the different boxes mix into one another. 
+           Target appropriate elenment and add a border to show each option as distinct.
+        */
+        @media (max-width: 600px) {
+            .nav-menu {
+                flex-direction: column;
+            }
+            .nav-menu li {
+                border-bottom: 1px solid rgba(255, 255, 255); 
+            }
+        }
+        
+
+
+        /* 1.5 Device Breakpoints (NEW) */
+        .device-box {
+            background-color: #e2e8f0; /* Default (Mobile) */
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #94a3b8;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #475569;
+        }
+
+        /* TODO 1.5: Tablet & Desktop Breakpoints */
+        /* 1. Create a media query for Tablet (min-width: 768px). 
+              Inside it, change .device-box background-color to yellow */
+              @media (min-width: 768px){
+            .device-box {
+                background-color: yellow;
+            }
+        }
+        /* 2. Create a media query for Desktop (min-width: 992px). 
+              Inside it, change .device-box background-color to green */
+        @media (min-width: 992px){
+            .device-box {
+                background-color: green;
+            }
+        }
+
+        /* 1.6 Screen Orientation */
+        .landscape-box {
+            background-color: #ffddd7;
+            color: #881337;
+            padding: 15px;
+            text-align: center;
+            border: 2px dashed #fb7185;
+            display: none; /* Hidden by default (Portrait) */
+            font-weight: bold;
+        }
+
+        /* TODO 1.6: Orientation Media Query */
+        /* Write a media query for (orientation: landscape).
+           Inside it, change display property to make it visible. */
+           @media (orientation: landscape) {
+            .landscape-box {
+                display: block; /* Shows the box only in landscape mode */
+              }
+            }
+
+
+        /* --- TASK 2: ACCESSIBILITY --- */
+
+        .btn-accessible {
+            /* TODO 2.1: Fix Contrast */
+            /* Current: #ccc background with white text fails WCAG (Web Content Accessibility Guidelines). */
+            /* Change background-color to a darker blue (e.g., #0d6efd) */
+            background-color: #171ac7; 
+            
+            color: white; border: none; padding: 10px 20px;
+            font-size: 1rem; cursor: pointer; border-radius: 4px;
+        }
+
+
+        /* TODO 2.2: Add Focus State */
+        /* Target .btn-accessible using pseudo-class */
+        /* Add outline and outline-offset - This helps keyboard users see where they are. */
+        .btn-accessible
+        {
+            outline: auto;
+            offset: 0.2cm;
+        }
+
+        /* --- TASK 3: ANIMATION --- */
+
+        /* 3.1 Hover Transition */
+        .anim-card {
+            background: white; border: 1px solid #ddd; padding: 20px;
+            width: 150px; text-align: center; cursor: pointer;
+            
+            /* TODO 3.1: Add Transition */
+            /* Add 'transition: transform 0.3s ease;' */
+            transition: 0.3s;
+        }
+
+        
+        /* TODO 3.1 (Cont): Add Transform to .anim-card on Hover */
+        /* Add 'transform: scale(1.1);' */
+        .anim-card:hover {
+            transform: scale(1.1);
+        }
+
+
+        /* 3.2 Loading Spinner Keyframes */
+      /* 3.2 Loading Spinner Keyframes */
+        .spinner {
+            width: 40px; 
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { 
+                transform: rotate(0deg); 
+            }
+            100% { 
+                transform: rotate(360deg); 
+            }
+        }
+
+      
+        /* TODO 3.4: Pulse Animation */
+        .pulse-circle {
+            width: 30px; height: 30px; background-color: red; border-radius: 50%;
+        }
+        /* Define @keyframes named 'pulse' that changes opacity from 1 to 0.5 */
+        /* Apply it to .pulse-circle with 1s duration, infinite alternate */
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Lab 3: Responsive Web Design and Animations</h1>
+        <p class="lead">Complete the tasks below. Edit the CSS in the <code>&lt;head&gt;</code> and HTML body where indicated.</p>
+        <br>
+    </header>
+
+    <section>
+        <div class="task-container">
+            <span class="task-badge">Task 1: Responsive Design</span>
+            <h3>1. Media Queries & Flexbox</h3>
+            
+            <div class="mobile-alert">
+                <strong>SUCCESS (1.1):</strong> You are viewing this on a mobile screen width!
+            </div>
+            <p><strong>Subtask 1.1:</strong> Resize your browser window to be very small. The red alert box above should appear only when narrow.</p>
+
+            <hr>
+            <p><strong>Subtask 1.2:</strong> Fix the menu below. On mobile, these items should stack vertically instead of squishing horizontally.</p>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+
+            <hr>
+            <h3>Bootstrap Grid System</h3>
+            <p class="small text-muted">For these tasks, modify the HTML classes below directly. No CSS writing needed.</p>
+
+            <p><strong>Subtask 1.3:</strong> The three boxes below are currently stacked (block elements). Use Bootstrap classes <code>row</code> (on parent) and <code>col-4</code> (on children) to make them sit side-by-side in equal columns.</p>
+            
+            <div class=""> 
+                
+                <div class="">
+                    <div class="demo-box">Column 1</div>
+                </div>
+                <div class="">
+                    <div class="demo-box">Column 2</div>
+                </div>
+                <div class="">
+                    <div class="demo-box">Column 3</div>
+                </div>
+            </div>
+
+            <p class="mt-3"><strong>Subtask 1.4:</strong> Responsive Utilities. Hide the box below on mobile phones but show it on desktops using Bootstrap classes.</p>
+            
+            <div class="demo-box bg-warning text-dark">
+                I should disappear on mobile screens!
+            </div>
+
+            <hr>
+            <h3>Advanced Media Queries</h3>
+            
+            <p><strong>Subtask 1.5:</strong> Breakpoints. Write CSS media queries so the box below changes color: <br>
+            <small>Default (Gray) &rarr; Tablet (Yellow) &rarr; Desktop (Green)</small></p>
+            <div class="device-box">Resize window to see color change!</div>
+
+            <p class="mt-4"><strong>Subtask 1.6:</strong> Orientation. Write a CSS media query so the box below <em>only</em> appears when the screen is in Landscape mode.</p>
+            <div class="landscape-box">I am visible because you are in LANDSCAPE mode.</div>
+
+        </div>
+    </section>
+
+    <section>
+        <div class="task-container">
+            <span class="task-badge">Task 2: Accessibility</span>
+            <h3>2. Visual & Assistive A11y</h3>
+
+            <p><strong>Subtask 2.1 & 2.2:</strong> The button below has poor contrast and no focus state. Fix this in the CSS block.</p>
+            <button class="btn-accessible">Submit Data</button>
+
+            <hr>
+            <p><strong>Subtask 2.3: ARIA Labels.</strong> The button below only contains an icon (X). A screen reader doesn't know what it does. Add an <code>aria-label="Close"</code> attribute to the HTML tag below.</p>
+            
+           <button aria-label="Close" style="padding: 5px 10px; font-weight: bold;">&times;</button>
+
+            <hr>
+            <p><strong>Subtask 2.4: Alt Text.</strong> The image below is missing an alt attribute. Add <code>alt="A cute kitten"</code> so screem readers can pick up the image description.</p>
+            
+            <img src="https://placehold.co/100x100/0077B5/ffffff.jpg?text=LinkedIn%20Post&font=ubuntu" style="border-radius: 8px;" alt="A cute kitten">
+        </div>
+    </section>
+
+    <section>
+        <div class="task-container">
+            <span class="task-badge">Task 3: Animation</span>
+            <h3>3. Transitions & Keyframes</h3>
+
+            <p><strong>Subtask 3.1:</strong> Simple Hover. Make this card scale up slightly (zoom in) when you hover over it using <code>transition</code> and <code>transform</code>.</p>
+            <div class="anim-card">Hover Me</div>
+
+            <hr>
+            <p><strong>Subtask 3.2 & 3.3:</strong> Infinite Spinner. Define the keyframes in CSS and apply the animation to the circle below.</p>
+            <div class="spinner"></div>
+
+            <hr>
+            <p><strong>Subtask 3.4:</strong> Pulse. Create a 'pulse' keyframe in CSS (opacity changing) and apply it to this red dot.</p>
+            <div class="pulse-circle"></div>
+        </div>
+    </section>
+
+    <section>
+        <div class="task-container">
+            <span class="task-badge">Task 4: Multi-page Site</span>
+            <h3>4. Site Structure & Navigation</h3>
+            
+            <p><strong>Subtask 4.1: External CSS.</strong> 
+            Currently, all styles are in the <code>&lt;head&gt;</code> of this file. 
+            To share these responsive styles with the new pages you are about to create, you must move them to an external file.
+            <ol>
+                <li>Create a new file named <code>style.css</code> in the same folder.</li>
+                <li>Cut everything <em>inside</em> the <code>&lt;style&gt;</code> tags above (from <code>:root</code> down to the end of animations) and paste it into <code>style.css</code>.</li>
+                <li>Delete the <code>&lt;style&gt;</code> tags from this HTML file.</li>
+                <li>Link the new CSS file here using: <code>&lt;link rel="stylesheet" href="style.css"&gt;</code>.</li>
+            </ol>
+            </p>
+
+            <hr>
+
+            <p><strong>Subtask 4.2: Create Pages.</strong> 
+            Create three new HTML files in the same folder: 
+            <code>products.html</code>, <code>about.html</code>, and <code>contact.html</code>. 
+            <br>
+            Copy the HTML structure (Head, Navbar, Footer) to these files so they share the same layout and are <strong>responsive</strong> (thanks to the external CSS).
+            </p>
+
+            <hr>
+
+            <p><strong>Subtask 4.3: Navigation.</strong> 
+            Update the navigation menu in <strong>ALL</strong> four files (including this one, which acts as "Home") so the links work properly.
+            <br>
+            Current code: <code>&lt;a href="#"&gt;</code>
+            <br>
+            Expected code example: <code>&lt;a href="products.html"&gt;Products&lt;/a&gt;</code>
+            </p>
+        </div>
+    </section>
+
+    <footer style="margin-top: 50px; text-align: center; color: #666;">
+        <p>Web Programming, Nishant Shankar &copy; 2026</p>
+    </footer>
+
+</body>
+</html>
