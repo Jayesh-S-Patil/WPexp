@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 4: Client-Side Form Validation using JavaScript ES6</title>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #f5f5f5;
+        }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; margin-bottom: 20px; }
+        h2 { color: #2980b9; margin-top: 30px; margin-bottom: 15px; }
+        h3 { color: #27ae60; margin-top: 20px; margin-bottom: 10px; }
+        .objective {
+            background-color: #e8f6f3;
+            padding: 15px;
+            border-left: 4px solid #1abc9c;
+            margin-bottom: 20px;
+        }
+        .task {
+            background-color: #fff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .todo {
+            background-color: #fef9e7;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #f1c40f;
+            border-radius: 0 5px 5px 0;
+        }
+        .todo::before {
+            content: "📝 TODO: ";
+            font-weight: bold;
+            color: #d68910;
+        }
+        code {
+            background-color: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        pre code { background-color: transparent; color: inherit; padding: 0; }
+        .note {
+            background-color: #ebf5fb;
+            padding: 12px;
+            border-left: 4px solid #3498db;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        .note::before { content: "💡 "; font-weight: bold; }
+        .demo-area {
+            background-color: #fff;
+            padding: 20px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .demo-area h4 { color: #3498db; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group input {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group input:focus { outline: none; border-color: #3498db; }
+        .error-message { color: #e74c3c; font-size: 0.85em; margin-top: 5px; min-height: 20px; }
+        .success-message { color: #27ae60; font-size: 0.9em; margin-top: 10px; }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover { background-color: #2980b9; }
+        .section-divider {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            margin: 30px 0;
+        }
+        ol, ul { margin-left: 25px; margin-bottom: 10px; }
+        li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Lab 4: Client-Side Form Validation using JavaScript ES6</h1>
+
+    <!-- ==================== THE FORM ==================== -->
+    <h2>Registration Form</h2>
+
+    <div class="demo-area">
+        <h4>Create an Account</h4>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter username">
+                <div class="error-message" id="username-error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" placeholder="Enter email">
+                <div class="error-message" id="email-error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter password">
+                <div class="error-message" id="password-error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password">
+                <div class="error-message" id="confirmPassword-error"></div>
+            </div>
+
+            <button type="submit">Register</button>
+            <div class="success-message" id="success-message"></div>
+        </form>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ==================== TASKS ==================== -->
+    <h2>Tasks: Add JavaScript to Make the Form Functional</h2>
+
+    <p>Complete each task by adding the JavaScript code inside the <code>&lt;script&gt;</code> tag at the bottom of this page. Each task builds on the previous one.</p>
+
+    <!-- TASK 1 -->
+    <div class="task">
+        <h3>Task 1: Select the Form Element</h3>
+        <p>Before we can work with any HTML element in JavaScript, we need to <strong>select</strong> it from the DOM (Document Object Model).</p>
+
+        <div class="todo">
+            Use <code>document.getElementById()</code> to select the form and store it in a constant.
+        </div>
+
+        <pre><code>// ============================================================
+// TASK 1: DOM SELECTION
+// ============================================================
+// document.getElementById('id') finds an HTML element by its id attribute
+// We use 'const' because this reference won't change
+
+const form = document.getElementById('registrationForm');
+
+// Verify it worked by logging to console (open browser DevTools with F12)
+console.log('Form element:', form);</code></pre>
+
+        <div class="note">
+            <strong>DOM Selection:</strong> The DOM is a tree representation of your HTML. JavaScript uses methods like <code>getElementById()</code>, <code>querySelector()</code>, and <code>getElementsByClassName()</code> to find and access elements.
+        </div>
+    </div>
+
+    <!-- TASK 2 -->
+    <div class="task">
+        <h3>Task 2: Add Form Submit Event Listener</h3>
+        <p>We need to <strong>listen</strong> for when the user submits the form, then run our validation code.</p>
+
+        <div class="todo">
+            Add an event listener that listens for the 'submit' event and prevents the default form submission.
+        </div>
+
+        <pre><code>// ============================================================
+// TASK 2: EVENT HANDLING
+// ============================================================
+// addEventListener(eventType, handlerFunction) attaches code to run when an event occurs
+// Common events: 'click', 'submit', 'input', 'change', 'keydown'
+//
+// event.preventDefault() stops the browser's default action (form submission/page reload)
+// This lets us validate BEFORE actually submitting
+
+form.addEventListener('submit', function(event) {
+    event.preventDefault();  // Stop the form from submitting normally
+
+    console.log('Form submission intercepted!');
+
+    // Our validation code will go here...
+});</code></pre>
+
+        <div class="note">
+            <strong>Event Handling:</strong> Events are signals that something happened (click, keypress, form submit). We use <code>addEventListener()</code> to run code when events occur. The <code>event</code> object contains info about what happened.
+        </div>
+    </div>
+
+    <!-- TASK 3 -->
+    <div class="task">
+        <h3>Task 3: Get Input Values</h3>
+        <p>Inside our event handler, we need to <strong>get the values</strong> the user typed into each field.</p>
+
+        <div class="todo">
+            Select each input field and get its value using the <code>.value</code> property.
+        </div>
+
+        <pre><code>// ============================================================
+// TASK 3: GETTING INPUT VALUES
+// ============================================================
+// Inside your submit event handler, add:
+
+form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    // Get input values using .value property
+    // .trim() removes whitespace from start and end of string
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    // Log values to verify (check browser console)
+    console.log('Username:', username);
+    console.log('Email:', email);
+    console.log('Password length:', password.length);
+});</code></pre>
+
+        <div class="note">
+            <strong>Accessing Values:</strong> Form inputs have a <code>.value</code> property containing what the user typed. Using <code>.trim()</code> removes accidental spaces. We don't trim passwords since spaces might be intentional.
+        </div>
+    </div>
+
+    <!-- TASK 4 -->
+    <div class="task">
+        <h3>Task 4: Create Validation Helper Functions</h3>
+        <p>Let's create reusable <strong>arrow functions</strong> (ES6 feature) to check if values are valid.</p>
+
+        <div class="todo">
+            Create arrow functions to validate: empty fields, email format, password length, and matching passwords.
+        </div>
+
+        <pre><code>// ============================================================
+// TASK 4: ARROW FUNCTIONS (ES6)
+// ============================================================
+// Arrow functions: const name = (params) => expression;
+// Shorter syntax than traditional functions
+// Single expression automatically returns (no 'return' keyword needed)
+
+// Check if a value is empty
+const isEmpty = (value) => value === '';
+
+// Check if email format is valid using a Regular Expression
+// Regular expressions (regex) are patterns used to match text
+// This pattern checks for: something@something.something
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+// Check if password is at least 8 characters
+const isValidPassword = (password) => password.length >= 8;
+
+// Check if two passwords match
+const doPasswordsMatch = (pass1, pass2) => pass1 === pass2;
+
+// Test them in console:
+console.log('isEmpty test:', isEmpty(''));           // true
+console.log('isEmpty test:', isEmpty('hello'));      // false
+console.log('Email test:', isValidEmail('a@b.com')); // true
+console.log('Email test:', isValidEmail('invalid')); // false</code></pre>
+
+        <div class="note">
+            <strong>Arrow Functions (ES6):</strong> A shorter way to write functions. <code>const add = (a, b) => a + b;</code> is equivalent to <code>function add(a, b) { return a + b; }</code>. Great for small, single-purpose functions.
+        </div>
+    </div>
+
+    <!-- TASK 5 -->
+    <div class="task">
+        <h3>Task 5: Create Functions to Show/Clear Errors</h3>
+        <p>We need functions to <strong>display error messages</strong> next to invalid fields and clear them when fixed.</p>
+
+        <div class="todo">
+            Create functions to show and clear error messages by manipulating the DOM.
+        </div>
+
+        <pre><code>// ============================================================
+// TASK 5: DOM MANIPULATION - Showing/Clearing Errors
+// ============================================================
+// .textContent sets the text inside an element
+// .style.property lets us change CSS properties directly
+
+// Show an error message for a specific field
+const showError = (fieldId, message) => {
+    // Find the error div (we named them fieldId + '-error')
+    const errorDiv = document.getElementById(fieldId + '-error');
+    errorDiv.textContent = message;
+
+    // Also highlight the input field with red border
+    const inputField = document.getElementById(fieldId);
+    inputField.style.borderColor = '#e74c3c';
+};
+
+// Clear the error message for a specific field
+const clearError = (fieldId) => {
+    const errorDiv = document.getElementById(fieldId + '-error');
+    errorDiv.textContent = '';
+
+    // Reset border to default
+    const inputField = document.getElementById(fieldId);
+    inputField.style.borderColor = '#bdc3c7';
+};
+
+// Clear all error messages
+const clearAllErrors = () => {
+    // Array of all field IDs - we loop through each one
+    ['username', 'email', 'password', 'confirmPassword'].forEach(fieldId => {
+        clearError(fieldId);
+    });
+    document.getElementById('success-message').textContent = '';
+};</code></pre>
+
+        <div class="note">
+            <strong>DOM Manipulation:</strong> We can change what's displayed on the page by modifying element properties. <code>.textContent</code> changes text, <code>.style</code> changes CSS, <code>.classList</code> adds/removes classes.
+        </div>
+    </div>
+
+    <!-- TASK 6 -->
+    <div class="task">
+        <h3>Task 6: Implement the Validation Logic</h3>
+        <p>Now let's put it all together! Update the submit handler to <strong>validate all fields</strong> and show appropriate errors.</p>
+
+        <div class="todo">
+            Complete the validation logic inside the submit event handler.
+        </div>
+
+        <pre><code>// ============================================================
+// TASK 6: COMPLETE VALIDATION LOGIC
+// ============================================================
+// Replace your earlier event handler with this complete version:
+
+form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    clearAllErrors();
+
+    // Get all input values
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    // Track if form is valid (assume true, set false if any validation fails)
+    let isFormValid = true;
+
+    // Validate Username: required, at least 3 characters
+    if (isEmpty(username)) {
+        showError('username', 'Username is required');
+        isFormValid = false;
+    } else if (username.length < 3) {
+        showError('username', 'Username must be at least 3 characters');
+        isFormValid = false;
+    }
+
+    // Write similar if-else statements to validate all input fields in the form
+
+    // If all validations passed, show success
+    if (isFormValid) {
+        // Select element with success-message ID and modify it to let user know registration is successful
+    }
+});</code></pre>
+    </div>
+
+    <!-- TASK 7 -->
+    <div class="task">
+        <h3>Task 7: Add Real-Time Validation (Enhancement)</h3>
+        <p>Currently validation only happens on submit. Let's add <strong>real-time feedback</strong> as users type!</p>
+
+        <div class="todo">
+            Add 'input' event listeners to validate fields as the user types.
+        </div>
+
+        <pre><code>// ============================================================
+// TASK 7: REAL-TIME VALIDATION
+// ============================================================
+// The 'input' event fires every time the user types a character
+// This gives immediate feedback without waiting for form submit
+
+// Real-time email validation
+document.getElementById('email').addEventListener('input', function(event) {
+    const email = event.target.value.trim();  // event.target is the input element
+
+    // Write an if-else statement to validate email (empty/invalid - error message, if valid - green border)
+});
+
+// Real-time password strength indicator
+document.getElementById('password').addEventListener('input', function(event) {
+    const password = event.target.value;
+    const errorDiv = document.getElementById('password-error');
+
+    // Write an if-else statement to check password strength (modify textContent and border colour based on password length)
+
+});</code></pre>
+
+        <div class="note">
+            <strong>Real-Time Validation:</strong> Using the 'input' event provides instant feedback. <code>event.target</code> refers to the element that triggered the event - in this case, the input field being typed in.
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ==================== YOUR CODE ==================== -->
+    <h2>Your Code Goes Here</h2>
+
+    <div class="task">
+        <p>Add your JavaScript code inside the <code>&lt;script&gt;</code> tag below. Combine all the tasks to create a complete validation system.</p>
+
+        <div class="todo">
+            <strong>Final Challenge:</strong> Combine all tasks and add real-time validation for the username field (must be at least 3 characters).
+        </div>
+    </div>
+
+    <!-- ==================== SCRIPT SECTION ==================== -->
+    <script>
+        // ============================================================
+        // YOUR JAVASCRIPT CODE - Combine all tasks here
+        // ============================================================
+
+        // TASK 1: Select the form
+        const element = document.getElementById
+
+
+        // TASK 4: Validation helper functions (arrow functions)
+
+
+        // TASK 5: Show/Clear error functions
+
+
+        // TASK 2, 3, 6: Form submit event handler with validation
+
+
+        // TASK 7: Real-time validation (optional enhancement)
+
+
+    </script>
+
+    <hr class="section-divider">
+
+    <!-- ==================== SUMMARY ==================== -->
+    <h2>Summary of Concepts</h2>
+
+    <div class="task">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="background-color: #3498db; color: white;">
+                <th style="padding: 10px; text-align: left;">Concept</th>
+                <th style="padding: 10px; text-align: left;">What You Learned</th>
+            </tr>
+            <tr style="background-color: #f8f9fa;">
+                <td style="padding: 10px; border: 1px solid #ddd;"><strong>DOM Selection</strong></td>
+                <td style="padding: 10px; border: 1px solid #ddd;"><code>document.getElementById('id')</code> - Find elements by their ID</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;"><strong>Event Handling</strong></td>
+                <td style="padding: 10px; border: 1px solid #ddd;"><code>element.addEventListener('event', handler)</code> - Run code when events occur</td>
+            </tr>
+            <tr style="background-color: #f8f9fa;">
+                <td style="padding: 10px; border: 1px solid #ddd;"><strong>Getting Values</strong></td>
+                <td style="padding: 10px; border: 1px solid #ddd;"><code>inputElement.value</code> - Access what the user typed</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;"><strong>Arrow Functions</strong></td>
+                <td style="padding: 10px; border: 1px solid #ddd;"><code>const fn = (x) => x * 2;</code> - ES6 shorthand for functions</td>
+            </tr>
+            <tr style="background-color: #f8f9fa;">
+                <td style="padding: 10px; border: 1px solid #ddd;"><strong>DOM Manipulation</strong></td>
+                <td style="padding: 10px; border: 1px solid #ddd;"><code>.textContent</code>, <code>.style</code> - Change page content dynamically</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;"><strong>Prevent Default</strong></td>
+                <td style="padding: 10px; border: 1px solid #ddd;"><code>event.preventDefault()</code> - Stop browser's default behavior</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="task">
+        <h3>References</h3>
+        <ul>
+            <li><a href="https://javascript.info/" target="_blank">The Modern JavaScript Tutorial</a></li>
+            <li><a href="https://javascript.info/form-elements" target="_blank">Form Properties and Methods</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model" target="_blank">MDN: Document Object Model</a></li>
+        </ul>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
