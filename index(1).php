@@ -11,12 +11,14 @@
 //   3. Loop through results and output each row as a table row
 // ============================================================
 
-// TODO: Include the database connection file
-// Hint: require_once 'db.php';
+// Step 1: Include the database connection file
+require_once 'db.php';
 
-
-// TODO: Run a SELECT query to fetch all students, ordered by id descending
-// Hint: $result = $conn->query("SELECT * FROM students ORDER BY id DESC");
+// Step 2: Run a SELECT query to fetch all students, ordered by id descending
+$result = $conn->query("SELECT * FROM students ORDER BY id DESC");
+if ($result === false) {
+    die("Query failed: " . $conn->error);
+}
 
 ?>
 <!DOCTYPE html>
@@ -75,25 +77,23 @@
         <tbody>
 
             <?php
-            // TODO: Check if the query returned any rows
-            // Hint: if ($result->num_rows > 0)
-
-            // TODO: Loop through each row and output a table row
-            /* Use a while loop: while ($row = $result->fetch_assoc())
-             *
-             * Inside the loop, output an HTML <tr> with:
-             *   - $row['id']
-             *   - $row['name']
-             *   - $row['email']
-             *   - $row['course']
-             *   - An "Edit" link to: edit.php?id=<?= $row['id'] ?>
-             *   - A "Delete" link to: delete.php?id=<?= $row['id'] ?>
-             *     with an onclick confirm: onclick="return confirm('Are you sure?')"
-             *
-             * If there are no rows, show a message:
-             *   <tr><td colspan="5" class="empty">No students found.</td></tr>
-             */
-            ?>
+            // Step 3: Check if the query returned any rows and loop through them
+            if ($result->num_rows > 0):
+                while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?= htmlspecialchars($row['id']) ?></td>
+                    <td><?= htmlspecialchars($row['name']) ?></td>
+                    <td><?= htmlspecialchars($row['email']) ?></td>
+                    <td><?= htmlspecialchars($row['course']) ?></td>
+                    <td>
+                        <a href="edit.php?id=<?= htmlspecialchars($row['id']) ?>">Edit</a>
+                        <a href="delete.php?id=<?= htmlspecialchars($row['id']) ?>" class="delete" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                <?php endwhile;
+            else: ?>
+                <tr><td colspan="5" class="empty">No students found.</td></tr>
+            <?php endif; ?>
 
         </tbody>
     </table>
