@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 7: PHP &amp; MySQL CRUD Application</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #f5f5f5;
+        }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; margin-bottom: 20px; }
+        h2 { color: #2980b9; margin-top: 30px; margin-bottom: 15px; }
+        h3 { color: #27ae60; margin-top: 20px; margin-bottom: 10px; }
+        .objective {
+            background-color: #e8f6f3;
+            padding: 15px;
+            border-left: 4px solid #1abc9c;
+            margin-bottom: 20px;
+        }
+        .task {
+            background-color: #fff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .todo {
+            background-color: #fef9e7;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #f1c40f;
+            border-radius: 0 5px 5px 0;
+        }
+        .todo::before {
+            content: "📝 TODO: ";
+            font-weight: bold;
+            color: #d68910;
+        }
+        code {
+            background-color: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        pre code { background-color: transparent; color: inherit; padding: 0; }
+        .note {
+            background-color: #ebf5fb;
+            padding: 12px;
+            border-left: 4px solid #3498db;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        .note::before { content: "💡 "; font-weight: bold; }
+        .warning {
+            background-color: #fdedec;
+            padding: 12px;
+            border-left: 4px solid #e74c3c;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        .warning::before { content: "⚠️ "; font-weight: bold; }
+        .section-divider {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            margin: 30px 0;
+        }
+        ol, ul { margin-left: 25px; margin-bottom: 10px; }
+        li { margin-bottom: 5px; }
+        .file-tree {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        .file-tree .folder { color: #f1c40f; }
+        .file-tree .file { color: #2ecc71; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #3498db; color: white; padding: 10px; text-align: left; }
+        td { padding: 10px; border: 1px solid #ddd; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+    <h1>Lab 7: PHP &amp; MySQL CRUD Application</h1>
+
+    <div class="objective">
+        <strong>Objective:</strong> To develop a dynamic web application using PHP and MySQL that performs Create, Read, Update, and Delete (CRUD) operations on a database.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ================================================================== -->
+    <!-- SECTION 1: SETUP & DATABASE                                        -->
+    <!-- ================================================================== -->
+    <h2>Section 1: Project Setup &amp; Database</h2>
+
+    <div class="task">
+        <h3>Project Structure</h3>
+        <p>This lab uses multiple PHP files — one for each operation. All files are inside a <code>lab7/</code> folder that you should place in your web server's document root (e.g., <code>htdocs</code> for XAMPP or <code>www</code> for WAMP).</p>
+
+        <div class="file-tree">
+            <span class="folder">lab7/</span><br>
+            ├── <span class="file">db.php</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← Database connection (shared by all files)<br>
+            ├── <span class="file">index.php</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← <strong>READ</strong> — Display all students in a table<br>
+            ├── <span class="file">create.php</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← <strong>CREATE</strong> — Form to add a new student<br>
+            ├── <span class="file">edit.php</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← <strong>UPDATE</strong> — Form to edit an existing student<br>
+            └── <span class="file">delete.php</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← <strong>DELETE</strong> — Delete a student by ID
+        </div>
+
+        <div class="note">
+            <strong>Prerequisites:</strong> You need a local server environment such as <a href="https://www.apachefriends.org/" target="_blank">XAMPP</a> or <a href="https://www.wampserver.com/" target="_blank">WAMP</a> with Apache, PHP, and MySQL running. Open <code>http://localhost/phpmyadmin</code> to verify MySQL is working.
+        </div>
+    </div>
+
+    <div class="task">
+        <h3>Example: How to Connect to MySQL &amp; Create the Database</h3>
+
+        <p>Before writing any CRUD code, you need a database and a table. Run the SQL below in <strong>phpMyAdmin</strong> (click the "SQL" tab) to create the database and table used throughout this lab.</p>
+
+        <pre><code>-- Run this in phpMyAdmin → SQL tab
+
+CREATE DATABASE IF NOT EXISTS lab7_studentdb;
+
+USE lab7_studentdb;
+
+CREATE TABLE IF NOT EXISTS students (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(100) NOT NULL,
+    email       VARCHAR(100) NOT NULL,
+    course      VARCHAR(100) NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+
+        <p style="margin-top: 15px;">Next, the <code>db.php</code> file creates a reusable connection using <strong>MySQLi</strong>. This file is already written for you — read through the comments below:</p>
+
+        <pre><code>&lt;?php
+// db.php — Database connection file
+// Every other PHP file will include this with: require_once 'db.php';
+
+$host   = "localhost";      // MySQL server address (localhost for XAMPP/WAMP)
+$user   = "root";           // Default username for XAMPP/WAMP
+$pass   = "";               // Default password is empty for XAMPP
+$dbname = "lab7_studentdb"; // The database we created above
+
+// Create a new MySQLi connection
+$conn = new mysqli($host, $user, $pass, $dbname);
+
+// Check if the connection failed
+if ($conn-&gt;connect_error) {
+    die("Connection failed: " . $conn-&gt;connect_error);
+}
+?&gt;</code></pre>
+
+        <div class="note">
+            <strong>Why <code>require_once</code>?</strong> It includes a file exactly once — if it's already been included, PHP skips it. This prevents accidentally creating multiple database connections. Every PHP file in this project starts with <code>require_once 'db.php';</code> to get access to the <code>$conn</code> variable.
+        </div>
+
+        <div class="warning">
+            <strong>Security note:</strong> In a real application, you should never use <code>root</code> with no password. You should also use <strong>prepared statements</strong> (shown in this lab) instead of directly inserting user input into SQL queries, to prevent SQL injection attacks.
+        </div>
+    </div>
+
+    <div class="task">
+        <h3>Key PHP &amp; MySQL Concepts</h3>
+
+        <p>Before starting the tasks, here's a quick reference of the PHP patterns you'll use:</p>
+
+        <table>
+            <tr>
+                <th>Pattern</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td><strong>Prepared Statement (INSERT)</strong></td>
+                <td><code>$stmt = $conn-&gt;prepare("INSERT INTO t (col) VALUES (?)");<br>$stmt-&gt;bind_param("s", $value);<br>$stmt-&gt;execute();</code></td>
+            </tr>
+            <tr>
+                <td><strong>SELECT all rows</strong></td>
+                <td><code>$result = $conn-&gt;query("SELECT * FROM t");<br>while ($row = $result-&gt;fetch_assoc()) { ... }</code></td>
+            </tr>
+            <tr>
+                <td><strong>Prepared Statement (SELECT one)</strong></td>
+                <td><code>$stmt = $conn-&gt;prepare("SELECT * FROM t WHERE id = ?");<br>$stmt-&gt;bind_param("i", $id);<br>$stmt-&gt;execute();<br>$row = $stmt-&gt;get_result()-&gt;fetch_assoc();</code></td>
+            </tr>
+            <tr>
+                <td><strong>Redirect after action</strong></td>
+                <td><code>header("Location: index.php");<br>exit;</code></td>
+            </tr>
+            <tr>
+                <td><strong>Read form data</strong></td>
+                <td><code>$name = $_POST['name'];</code></td>
+            </tr>
+            <tr>
+                <td><strong>Read URL parameter</strong></td>
+                <td><code>$id = $_GET['id'];</code></td>
+            </tr>
+            <tr>
+                <td><strong>bind_param type codes</strong></td>
+                <td><code>"s"</code> = string, <code>"i"</code> = integer, <code>"d"</code> = double, <code>"b"</code> = blob<br><code>"sss"</code> = three strings, <code>"isss"</code> = int then three strings</td>
+            </tr>
+        </table>
+
+        <div class="note">
+            <strong>Prepared statements</strong> are the safe way to run SQL with user input. The <code>?</code> placeholder is filled by <code>bind_param()</code>, which automatically escapes the value — preventing SQL injection.
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ================================================================== -->
+    <!-- SECTION 2: CRUD TASKS                                              -->
+    <!-- ================================================================== -->
+    <h2>Section 2: CRUD Operations</h2>
+
+    <!-- TASK 1 -->
+    <div class="task">
+        <h3>Task 1: READ — Display All Students (<code>index.php</code>)</h3>
+        <p>The main page queries the <code>students</code> table and displays every row in an HTML table. Each row has "Edit" and "Delete" links that pass the student's <code>id</code> via the URL (e.g., <code>edit.php?id=3</code>).</p>
+
+        <p><strong>How it works:</strong></p>
+        <ol>
+            <li>Include <code>db.php</code> to get the <code>$conn</code> connection</li>
+            <li>Run <code>SELECT * FROM students</code> using <code>$conn-&gt;query()</code></li>
+            <li>Loop through results with <code>while ($row = $result-&gt;fetch_assoc())</code></li>
+            <li>Output each row inside <code>&lt;tr&gt;</code> tags using <code>&lt;?= $row['name'] ?&gt;</code></li>
+            <li>Add an "Add New Student" link to <code>create.php</code> and Edit/Delete links per row</li>
+        </ol>
+
+        <div class="todo">
+            Open <code>lab7/index.php</code>. Complete the PHP code to query all students and display them in the HTML table. Follow the step-by-step comments in the file.
+        </div>
+    </div>
+
+    <!-- TASK 2 -->
+    <div class="task">
+        <h3>Task 2: CREATE — Add a New Student (<code>create.php</code>)</h3>
+        <p>This page has two jobs: show the form (on GET request), and process the form data (on POST request). When the form is submitted, PHP inserts a new row using a <strong>prepared statement</strong>, then redirects back to <code>index.php</code>.</p>
+
+        <p><strong>How it works:</strong></p>
+        <ol>
+            <li>Include <code>db.php</code></li>
+            <li>Check if the form was submitted: <code>if ($_SERVER['REQUEST_METHOD'] === 'POST')</code></li>
+            <li>Read form values from <code>$_POST</code></li>
+            <li>Prepare an INSERT statement with <code>?</code> placeholders</li>
+            <li>Bind parameters with <code>bind_param("sss", ...)</code> (3 strings: name, email, course)</li>
+            <li>Execute and redirect to <code>index.php</code></li>
+        </ol>
+
+        <div class="note">
+            <strong>Why check <code>$_SERVER['REQUEST_METHOD']</code>?</strong> When a user first visits <code>create.php</code>, it's a GET request — just show the empty form. When they click "Submit", it's a POST request — that's when you process the data. One file handles both scenarios.
+        </div>
+
+        <div class="todo">
+            Open <code>lab7/create.php</code>. Complete the PHP block that handles the POST request — prepare the INSERT statement, bind the three parameters, execute, and redirect. Follow the step-by-step comments in the file.
+        </div>
+    </div>
+
+    <!-- TASK 3 -->
+    <div class="task">
+        <h3>Task 3: UPDATE — Edit an Existing Student (<code>edit.php</code>)</h3>
+        <p>This page is more complex because it does three things: fetch the existing data (to pre-fill the form), display the form, and process the updated data on submission.</p>
+
+        <p><strong>How it works:</strong></p>
+        <ol>
+            <li>Include <code>db.php</code></li>
+            <li>Read the student ID from the URL: <code>$id = $_GET['id'];</code></li>
+            <li><strong>On GET:</strong> Fetch the student's current data with a prepared SELECT and fill the form with their existing name, email, and course</li>
+            <li><strong>On POST:</strong> Read the updated values from <code>$_POST</code>, run a prepared UPDATE statement, and redirect to <code>index.php</code></li>
+        </ol>
+
+        <div class="note">
+            <strong>Pre-filling the form:</strong> Use the <code>value</code> attribute on inputs — e.g., <code>&lt;input value="&lt;?= $student['name'] ?&gt;"&gt;</code>. For textareas, put the value between the opening and closing tags.
+        </div>
+
+        <div class="todo">
+            Open <code>lab7/edit.php</code>. Complete both parts: the GET handler (fetch and pre-fill) and the POST handler (update and redirect). Follow the step-by-step comments in the file.
+        </div>
+    </div>
+
+    <!-- TASK 4 -->
+    <div class="task">
+        <h3>Task 4: DELETE — Remove a Student (<code>delete.php</code>)</h3>
+        <p>The simplest operation — receive an <code>id</code> via the URL, delete that row from the database, and redirect back to the list.</p>
+
+        <p><strong>How it works:</strong></p>
+        <ol>
+            <li>Include <code>db.php</code></li>
+            <li>Read the student ID from the URL: <code>$id = $_GET['id'];</code></li>
+            <li>Prepare a DELETE statement with a <code>?</code> placeholder</li>
+            <li>Bind the ID parameter with <code>bind_param("i", $id)</code></li>
+            <li>Execute and redirect to <code>index.php</code></li>
+        </ol>
+
+        <div class="warning">
+            <strong>In a real application</strong>, you should never delete records via a GET request (links). GET requests should only read data. A proper implementation would use a POST form with a confirmation step. We use GET here for simplicity.
+        </div>
+
+        <div class="todo">
+            Open <code>lab7/delete.php</code>. Complete the PHP code to delete the student and redirect. Follow the step-by-step comments in the file.
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ==================== CHECKLIST ==================== -->
+    <h2>Checklist</h2>
+
+    <div class="task">
+        <div class="todo">
+            <strong>Checklist:</strong>
+            <ol>
+                <li><strong>Setup</strong> — Create the database and table in phpMyAdmin using the SQL provided</li>
+                <li><strong>Task 1 · READ</strong> — Complete <code>index.php</code> to display all students in a table</li>
+                <li><strong>Task 2 · CREATE</strong> — Complete <code>create.php</code> to insert a new student via a form</li>
+                <li><strong>Task 3 · UPDATE</strong> — Complete <code>edit.php</code> to fetch, pre-fill, and update a student</li>
+                <li><strong>Task 4 · DELETE</strong> — Complete <code>delete.php</code> to remove a student by ID</li>
+            </ol>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ==================== SUMMARY ==================== -->
+    <h2>Summary of Concepts</h2>
+
+    <div class="task">
+        <table>
+            <tr>
+                <th>Concept</th>
+                <th>What You Learned</th>
+            </tr>
+            <tr>
+                <td><strong>MySQLi Connection</strong></td>
+                <td>Create a database connection with <code>new mysqli()</code> and share it across files using <code>require_once</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>Prepared Statements</strong></td>
+                <td>Use <code>prepare()</code>, <code>bind_param()</code>, and <code>execute()</code> to safely run SQL with user input.</td>
+            </tr>
+            <tr>
+                <td><strong>$_POST and $_GET</strong></td>
+                <td><code>$_POST</code> reads data from form submissions. <code>$_GET</code> reads data from URL parameters.</td>
+            </tr>
+            <tr>
+                <td><strong>CRUD Operations</strong></td>
+                <td>The four fundamental database operations: Create (INSERT), Read (SELECT), Update (UPDATE), Delete (DELETE).</td>
+            </tr>
+            <tr>
+                <td><strong>Request Method Check</strong></td>
+                <td><code>$_SERVER['REQUEST_METHOD']</code> tells you if the request is GET or POST — use it to handle forms.</td>
+            </tr>
+            <tr>
+                <td><strong>Redirect with header()</strong></td>
+                <td><code>header("Location: index.php"); exit;</code> sends the user to another page after a database action.</td>
+            </tr>
+            <tr>
+                <td><strong>fetch_assoc()</strong></td>
+                <td>Returns a row as an associative array: <code>$row['name']</code>, <code>$row['email']</code>, etc.</td>
+            </tr>
+            <tr>
+                <td><strong>PHP in HTML</strong></td>
+                <td>Use <code>&lt;?= $var ?&gt;</code> (short echo) to output PHP values directly inside HTML markup.</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="task">
+        <h3>References</h3>
+        <ul>
+            <li><a href="https://www.php.net/manual/en/book.mysqli.php" target="_blank">PHP Manual: MySQLi</a></li>
+            <li><a href="https://www.php.net/manual/en/mysqli.quickstart.prepared-statements.php" target="_blank">PHP Manual: Prepared Statements</a></li>
+            <li><a href="https://www.w3schools.com/php/php_mysql_intro.asp" target="_blank">W3Schools: PHP MySQL</a></li>
+            <li><a href="https://www.apachefriends.org/" target="_blank">XAMPP (Local Server Environment)</a></li>
+        </ul>
+    </div>
+
+</body>
+</html>
